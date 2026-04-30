@@ -12,4 +12,4 @@ def get_about(request):
     return HttpResponse("About Page")
 
 def get_contact(request):
-    return HttpResponse("Contact Page")
+    return HttpResponse("<h1><b>Contact Page</b></h1>")
