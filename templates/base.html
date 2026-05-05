@@ -1,0 +1,24 @@
+{% load static %}
+
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>{% block title %} My Blog {% endblock %}</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}" />
+    <!-- Google Fonts for that clean Medium look -->
+    <link
+      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Lora:ital@0;1&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body>
+    {% include "partials/header.html" %}
+    <main class="container">
+      {% include "partials/post_card.html" %}
+      {% block content %} {% endblock %}
+    </main>
+    {% include "partials/footer.html" %}
+  </body>
+</html>

@@ -1,0 +1,23 @@
+<div class="card-container">
+  {% for post in posts %}
+  <div class="card">
+    <div class="card-header">
+      <!-- Using 'title' as the name from your model -->
+      <h3 class="card-title">{{ post.title }}</h3>
+      <!-- Using 'created_at' for the date -->
+      <span class="card-date">{{ post.created_at|date:"M d, Y" }}</span>
+    </div>
+    <div class="card-body">
+      <!-- This maps to the description column you added -->
+      <p class="card-description">
+        {{ post.description|default:"No description provided." }}
+      </p>
+    </div>
+    <div class="card-footer">
+      <a href="#" class="btn-read">Read More</a>
+    </div>
+  </div>
+  {% empty %}
+  <p>No posts found.</p>
+  {% endfor %}
+</div>

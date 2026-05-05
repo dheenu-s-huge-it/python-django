@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Categories, Post, Tags, Comments
+from app.models import Categories, Post, Tags, Comments, Contact, About, Details
 
 # Register your models here.
 
@@ -15,4 +15,7 @@ admin.site.register(Categories)
 # admin.site.register(Post)
 admin.site.register(Comments)
 admin.site.register(Tags)
+admin.site.register(Contact)
+admin.site.register(About)
+admin.site.register(Details)
 
