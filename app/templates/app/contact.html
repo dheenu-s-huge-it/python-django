@@ -1,11 +1,11 @@
 {% extends "base.html" %} {% load static %} {% block content %}
 <title>{% block title %} Contact {% endblock %}</title>
 <h2>Contact</h2>
-<img
+<!-- <img
   src="{% static 'images/logo.jpg' %}"
   alt="logo"
   style="width: 50px; height: 50px; border-radius: 50%"
-/>
+/> -->
 
 {% for con in contact %}
 <article>
@@ -20,5 +20,5 @@
 <hr />
 
 {% empty %}
-<p>No posts available.</p>
+<p>Contacts not found<p>
 {% endfor %} {% endblock %}

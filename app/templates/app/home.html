@@ -1,35 +1,33 @@
 {% extends "base.html" %} {% load static %} {% block content %}
 
 <title>{% block title %} Home {% endblock %}</title>
-<h2>All Posts</h2>
-<img
-  src="{% static 'images/logo.jpg' %}"
-  alt="logo"
-  style="width: 50px; height: 50px; border-radius: 50%"
-/>
+<link rel="stylesheet" href="{% static 'css/style.css' %}" />
+<div class="home-header">
+  <h2>All Posts <span style="font-weight: 800;">({{count}})</span></h2>
+  <form method="GET" id="searchForm">
+    <input
+      type="text"
+      name="search"
+      id="searchInput"
+      class="searchbar"
+      placeholder="Search posts..."
+      value="{{ request.GET.search }}"
+    />
+  <select name="category" class="categoryTag">
+    <option value="">All Categories</option>
 
-{% for post in posts %}
-<article>
-  <h3>{{ post.title|capfirst }}</h3>
-
-  <p>{{ post.body|truncatewords:25 }}</p>
-
-  <small>
-    {% if post.published %} Published at {% else %} Draft {% endif %}
-    <p>{{ post.created_at|date:"d M Y" }}</p>
-  </small>
-  <small>
-    {% if post.published %} Updated at {% else %} Draft {% endif %}
-    <p>{{ post.updated_at|date:"d M Y" }}</p>
-  </small>
-
-  <br />
-
-  <strong> </strong>
-</article>
-
-<hr />
-
-{% empty %}
-<p>No posts available.</p>
+    {% for cat in categories %}
+      <option value="{{ cat.id }}" 
+        {% if request.GET.category == cat.id|stringformat:"s" %}
+          selected
+        {% endif %}
+      >
+        {{ cat.title }}
+      </option>
+    {% endfor %}
+  </select>
+  </form>
+</div>
+{% include "partials/post_card.html" %} {% for post in posts %} {% empty %}
+<p></p>
 {% endfor %} {% endblock %}

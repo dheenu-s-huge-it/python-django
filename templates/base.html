@@ -15,10 +15,27 @@
   </head>
   <body>
     {% include "partials/header.html" %}
-    <main class="container">
-      {% include "partials/post_card.html" %}
-      {% block content %} {% endblock %}
-    </main>
+    <main class="container">{% block content %} {% endblock %}</main>
+    <div class="pagination">
+      {% if page_obj.has_previous %}
+      <a
+        href="?page={{ page_obj.previous_page_number }}&search={{ request.GET.search }}"
+      >
+        <button class="prevBtn">Prev</button>
+      </a>
+      {% endif %}
+
+      <span>{{ page_obj.number }}</span>
+
+      {% if page_obj.has_next %}
+      <a
+        href="?page={{ page_obj.next_page_number }}&search={{ request.GET.search }}&category={{ request.GET.category }}"
+      >
+        <button class="nextBtn">Next</button>
+      </a>
+      {% endif %}
+    </div>
     {% include "partials/footer.html" %}
+    <script src="{% static 'js/script.js' %}"></script>
   </body>
 </html>

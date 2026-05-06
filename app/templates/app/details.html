@@ -1,0 +1,30 @@
+{% extends "base.html" %} 
+{% load static %} 
+
+{% block title %} Post Details {% endblock %}
+
+{% block content %}
+<h2>Post Details</h2>
+
+<img
+  src="{% static 'images/logo.jpg' %}"
+  alt="logo"
+  style="width: 50px; height: 50px; border-radius: 50%"
+/>
+
+{% if details %}
+<article>
+  <h4>Published at: {{ details.created_at|date:"d M Y" }} </h4>
+  <h4>Updated at: {{ details.updated_at|date:"d M Y" }} </h4>
+  
+  <h3>{{ details.title|capfirst }}</h3>
+
+  <p>{{ details.body }}</p>
+</article>
+
+<hr />
+{% else %}
+<p>Post Details unavailable.</p>
+{% endif %}
+
+{% endblock %}
