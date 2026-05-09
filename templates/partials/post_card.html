@@ -1,13 +1,16 @@
 <div class="card-container">
-  {% for post in posts %}
-  {% if post.published %}
+  {% for post in posts %} {% if post.published %}
   <div class="card">
     <div class="card-header">
       <!-- Using 'title' as the name from your model -->
       <h3 class="card-title">{{ post.title }}</h3>
       <!-- Using 'created_at' for the date -->
-      <span class="card-date">Published at: {{ post.created_at|date:"M d, Y" }}</span>
-      <span class="card-date">Updated at: {{ post.updated_at|date:"M d, Y" }}</span>
+      <span class="card-date"
+        >Published at: {{ post.created_at|date:"M d, Y" }}</span
+      >
+      <span class="card-date"
+        >Updated at: {{ post.updated_at|date:"M d, Y" }}</span
+      >
     </div>
     <div class="card-body">
       <!-- This maps to the description column you added -->
@@ -15,12 +18,23 @@
         {{ post.description|default:"No description provided." }}
       </p>
     </div>
-    <div class="card-footer">
-      <a href="{% url 'app:post_details' post.id%}" class="btn-read">Read More</a>
+    <a href="{% url 'app:post_details' post.slug%}" class="card-footer">
+      <div class="btn-read">Read More</div>
+    </a>
+    <div class="action-btn">
+      <span class=""
+        ><a href="{% url 'app:update_post' post.slug%}" class="edit-btn"
+          >Edit</a
+        ></span
+      >
+      <span class=""
+        ><a href="{% url 'app:delete_post' post.slug%}" class="delete-btn"
+          >Delete</a
+        ></span
+      >
     </div>
   </div>
-  {%endif%}
-  {% empty %}
+  {%endif%} {% empty %}
   <p>No posts data found.</p>
   {% endfor %}
 </div>

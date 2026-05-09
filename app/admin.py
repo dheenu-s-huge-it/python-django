@@ -3,7 +3,8 @@ from app.models import Categories, Post, Tags, Comments, Contact, About, Details
 
 # Register your models here.
 
-# It creates search filter, search field and what to display in admin panel
+# It creates search filter, search field and what to display in admin panel http://127.0.0.1:8000/admin
+# admin.site.register(P ost) 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'published', 'created_at', 'updated_at', 'category_id')

@@ -1,7 +1,7 @@
 {% extends "base.html" %} 
 {% load static %} 
 
-{% block title %} Post Details {% endblock %}
+{% block title %} Post Details {% endblock %} 
 
 {% block content %}
 <h2>Post Details</h2>
@@ -12,19 +12,18 @@
   style="width: 50px; height: 50px; border-radius: 50%"
 />
 
-{% if details %}
-<article>
-  <h4>Published at: {{ details.created_at|date:"d M Y" }} </h4>
-  <h4>Updated at: {{ details.updated_at|date:"d M Y" }} </h4>
-  
-  <h3>{{ details.title|capfirst }}</h3>
+{% for detail in details %}
+    <article>
+        <h4>Published at: {{ detail.created_at|date:"d M Y" }}</h4>
+        <h4>Updated at: {{ detail.updated_at|date:"d M Y" }}</h4>
 
-  <p>{{ details.body }}</p>
-</article>
+        <h3>{{ detail.title|capfirst }}</h3>
 
-<hr />
-{% else %}
-<p>Post Details unavailable.</p>
-{% endif %}
+        <p>{{ detail.body }}</p>
+    </article>
+    <hr />
+{% empty %}
+    <p>Post Details unavailable.</p>
+{% endfor %}
 
 {% endblock %}

@@ -1,0 +1,57 @@
+{% extends "base.html" %} {% load static %} {% block content %}
+
+<div class="form-container">
+  <h2>Create Post</h2>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <!-- NON FIELD ERRORS -->
+
+    {% if form.non_field_errors %}
+    <div class="error-box">{{ form.non_field_errors }}</div>
+    {% endif %}
+
+    <!-- TITLE -->
+
+    <div class="form-group">
+      <label for="{{ form.title.id_for_label }}"> Title </label>
+
+      {{ form.title }} {% if form.title.errors %}
+      <div class="field-error">{{ form.title.errors }}</div>
+      {% endif %}
+    </div>
+
+    <!-- BODY -->
+
+    <div class="form-group">
+      <label for="{{ form.body.id_for_label }}"> Body </label>
+
+      {{ form.body }} {% if form.body.errors %}
+      <div class="field-error">{{ form.body.errors }}</div>
+      {% endif %}
+    </div>
+
+    <!-- CATEGORY -->
+
+    <div class="form-group">
+      <label for="{{ form.category.id_for_label }}"> Category </label>
+
+      {{ form.category }} {% if form.category.errors %}
+      <div class="field-error">{{ form.category.errors }}</div>
+      {% endif %}
+    </div>
+
+    <!-- PUBLISHED -->
+
+    <div class="form-group checkbox-group">
+      {{ form.published }}
+
+      <label for="{{ form.published.id_for_label }}"> Published </label>
+    </div>
+
+    <button type="submit" class="submit-btn">Create Post</button>
+  </form>
+</div>
+
+{% endblock %}
