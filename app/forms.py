@@ -1,6 +1,9 @@
 from django import forms
 from .models import Post
 
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.models import User
+
 
 class PostForm(forms.ModelForm):
     class Meta:
@@ -35,3 +38,8 @@ class PostForm(forms.ModelForm):
                     "Maximum characters reached. Characters must be below 100"
                 )
         return body
+
+class RegistrationForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ["username", "email", "password1", "password2"]

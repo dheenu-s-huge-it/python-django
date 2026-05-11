@@ -11,6 +11,7 @@
       <span class="card-date"
         >Updated at: {{ post.updated_at|date:"M d, Y" }}</span
       >
+      <p>Created by {{ post.author.username }}</p>
     </div>
     <div class="card-body">
       <!-- This maps to the description column you added -->
@@ -21,6 +22,7 @@
     <a href="{% url 'app:post_details' post.slug%}" class="card-footer">
       <div class="btn-read">Read More</div>
     </a>
+    {% if request.user == post.author %}
     <div class="action-btn">
       <span class=""
         ><a href="{% url 'app:update_post' post.slug%}" class="edit-btn"
@@ -33,6 +35,7 @@
         ></span
       >
     </div>
+    {% endif %}
   </div>
   {%endif%} {% empty %}
   <p>No posts data found.</p>

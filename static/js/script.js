@@ -25,3 +25,23 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 400);
   });
 });
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const userInfo = document.querySelector('.user-info');
+    
+    if (userInfo) {
+      userInfo.addEventListener('click', function(e) {
+        // Prevent the click from bubbling up if you click the button itself
+        if (e.target.tagName !== 'BUTTON') {
+          this.classList.toggle('active');
+        }
+      });
+
+      // Close the dropdown if clicking anywhere else on the screen
+      document.addEventListener('click', function(e) {
+        if (!userInfo.contains(e.target)) {
+          userInfo.classList.remove('active');
+        }
+      });
+    }
+  });

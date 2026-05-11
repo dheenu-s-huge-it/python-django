@@ -1,18 +1,16 @@
 from django.urls import path
 from .views import (
-    get_about,
+    get_myblogs,
     get_contact,
     HomepagePostView,
     PostDetailView,
-    app_login,
-    app_register,
-    # create_post,
-    # update_post,
-    # delete_post
     CreatePostView,
     UpdatePostView,
-    DeletePostView
+    DeletePostView,
     
+    register_user,
+    login_user,
+    logout_user
 )
 
 app_name = "app"
@@ -20,18 +18,19 @@ app_name = "app"
 # Function + Class Based URL patterns
 
 urlpatterns = [
-    path("", HomepagePostView.as_view(), name="get_home"),  # class based url pattern
+    path("", login_user, name="login_user"), 
+    path("login/", login_user, name="login_user"),
+    path("register/", register_user, name="register_user"),
+    path("logout/", logout_user, name="logout_user"),
     path(
         "homepage/", HomepagePostView.as_view(), name="homepage"
-    ),  # class based url pattern
-    path("about/", get_about, name="about"),
+    ),
+    path("myblogs/", get_myblogs, name="myblogs"),
     path("contact/", get_contact, name="contact"),
     path("post_detail/<slug:slug>/", PostDetailView.as_view(), name="post_details"),
     path("create_post/", CreatePostView.as_view(), name="create_post"),
     path("update_post/<slug:slug>/", UpdatePostView.as_view(), name="update_post"),
     path("post_delete/<slug:slug>/", DeletePostView.as_view(), name="delete_post"),
-    path("login/", app_login, name="app_login"),
-    path("register/", app_register, name="app_register"),
 ]
 
 # Function Based URL patterns

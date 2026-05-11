@@ -3,27 +3,13 @@
 <header>
   <div class="nav-container">
     <div>
-      <div class="logo">My Blog</div>
+      <div class="logo">Dheen.blogs</div>
     </div>
     <nav>
+      {% if user.is_authenticated %} {% csrf_token %}
       <a href="/homepage">Home</a>
-      <a href="/about">About</a>
+      <a href="/myblogs">My blogs</a>
       <a href="/contact">Contact</a>
-      <a href="/login"
-        ><button
-          style="
-            padding: 8px 20px;
-            border-radius: 10px;
-            background-color: #007bff;
-            color: white;
-            cursor: pointer;
-            border: none;
-            outline: none;
-          "
-        >
-          Login
-        </button></a
-      >
       <a href="{% url 'app:create_post' %}">
         <button
           style="
@@ -39,6 +25,52 @@
           Create post
         </button></a
       >
+      <div class="user-info">
+        <p>{{ user.username }}</p>
+        <img
+          src="{% static 'images/logo.jpg' %}"
+          alt="user-logo"
+          style="width: 40px; height: 40px; border-radius: 50%"
+        />
+        <form method="POST" action="{% url 'app:logout_user' %}">
+          {% csrf_token %}
+
+          <button
+            type="submit"
+            style="
+              padding: 8px 20px;
+              border-radius: 10px;
+              background-color: #d80000;
+              color: white;
+              cursor: pointer;
+              border: none;
+              outline: none;
+            "
+          >
+            Logout
+          </button>
+        </form>
+      </div>
+
+      {% else %}
+
+      <a href="{% url 'app:login_user' %}">
+        <button
+          style="
+            padding: 8px 20px;
+            border-radius: 10px;
+            background-color: #007bff;
+            color: white;
+            cursor: pointer;
+            border: none;
+            outline: none;
+          "
+        >
+          Login
+        </button></a
+      >
+
+      {% endif %}
     </nav>
   </div>
 </header>

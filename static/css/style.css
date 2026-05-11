@@ -28,12 +28,18 @@ header {
 }
 
 .nav-container {
-  max-width: 1000px;
+  max-width: 100%; /* Constrain width so it doesn't stretch too far */
   margin: 0 auto;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 20px;
+  padding: 10px 20px;
+}
+
+nav {
+  display: flex;
+  align-items: center;
+  gap: 20px; /* Uniform spacing between links */
 }
 
 .logo {
@@ -46,7 +52,6 @@ header {
 nav a {
   text-decoration: none;
   color: var(--text-muted);
-  margin-left: 25px;
   font-weight: 500;
   font-size: 0.95rem;
   transition: color 0.2s;
@@ -70,7 +75,7 @@ nav a:hover {
 
 /* Main Content Area */
 .container {
-  max-width: 1000px;
+  max-width: 100%;
   margin: 60px auto;
   padding: 0 20px;
 }
@@ -256,4 +261,61 @@ footer {
   align-items: center;
   justify-content: end;
   padding: 10px 10px;
+}
+
+.user-info {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  cursor: pointer;
+  padding: 5px 10px;
+  border-radius: 8px;
+  transition: background 0.2s;
+  color: var(--text-muted);
+}
+
+.user-info form {
+  display: none;
+  position: absolute;
+  top: 110%; /* Sits right below the profile */
+  right: 0;
+  background: white;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  padding: 10px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 1000;
+}
+
+.user-info.active form {
+  display: block;
+}
+
+.user-info form button {
+  width: 100%;
+  white-space: nowrap;
+}
+
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .nav-container {
+    flex-direction: column;
+    gap: 15px;
+  }
+  nav a {
+    margin-left: 15px;
+    font-size: 0.85rem;
+  }
+  
+  .logo {
+    font-size: 1.2rem;
+  }
+
+  /* Hide username on mobile to save space if needed */
+  .user-info p {
+    display: none;
+    color: var(--text-muted);
+  }
 }

@@ -4,6 +4,8 @@ from django.utils.text import slugify
 
 from django.urls import reverse
 
+from django.contrib.auth.models import User
+
 
 # Create your models here.
 
@@ -31,6 +33,8 @@ class Post(models.Model):
     category = models.ForeignKey(
         Categories, on_delete=models.CASCADE, null=True, blank=True
     )
+    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts", null=True, blank=True)
+    
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -107,7 +111,7 @@ class Contact(models.Model):
         verbose_name_plural = "Contact"
 
 
-class About(models.Model):
+class MyblogsTemp(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=12000)
 
@@ -115,4 +119,4 @@ class About(models.Model):
         return self.name
 
     class Meta:
-        verbose_name_plural = "About"
+        verbose_name_plural = "My blogs"

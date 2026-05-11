@@ -126,3 +126,7 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 STATICFILES_DIRS = [BASE_DIR / "static"]
+
+LOGIN_URL = 'app:login_user'
+LOGIN_REDIRECT_URL = "app:homepage"
+LOGOUT_REDIRECT_URL = "app:login_user"
