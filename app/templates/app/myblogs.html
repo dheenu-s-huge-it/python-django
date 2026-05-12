@@ -1,24 +1,74 @@
-{% extends "base.html" %} {% load static %} {% block content %}
+{% extends "base.html" %} {% load static %} {% block title %} My blogs
+{%endblock %} {% block content %}
+<div class="home-header">
+ <h2>My Posts<span style="font-weight: 800">({{count}})</span></h2>
+  <form method="GET" id="searchForm">
+    <input
+      type="text"
+      name="search"
+      id="searchInput"
+      class="searchbar"
+      placeholder="Search posts..."
+      value="{{ request.GET.search }}"
+    />
+  <select name="category" class="categoryTag">
+    <option value="">All Categories</option>
 
-<title>{% block title %} My blogs {% endblock %}</title>
-<h2>My blogs</h2>
-<img
-  src="{% static 'images/logo.jpg' %}"
-  alt="logo"
-  style="width: 50px; height: 50px; border-radius: 50%"
-/>
+    {% for cat in categories %}
+      <option value="{{ cat.id }}" 
+        {% if request.GET.category == cat.id|stringformat:"s" %}
+          selected
+        {% endif %}
+      >
+        {{ cat.title }}
+      </option>
+    {% endfor %}
+  </select>
+  </form>
+</div>
+<div class="card-container">
+  {% for blog in myblogs %}
+  <div class="card">
+    <div class="card-header">
+      <!-- Using 'title' as the name from your model -->
+      <h3 class="card-title">
+        {{ blog.title }}
+      </h3>
+      <!-- Using 'created_at' for the date -->
+      <span class="card-date"
+        >Published at: {{ blog.created_at|date:"M d, Y" }}</span
+      >
+      <span class="card-date"
+        >Updated at: {{ blog.updated_at|date:"M d, Y" }}</span
+      >
+      <p>Created by {{ blog.author.username }}</p>
+    </div>
+    <div class="card-body">
+      <!-- This maps to the description column you added -->
+      <p class="card-description">
+        {{ blog.body|default:"No description provided." }}
+      </p>
+    </div>
+    <a href="{% url 'app:post_details' blog.slug%}" class="card-footer">
+      <div class="btn-read">Read More</div>
+    </a>
+    {% if request.user == blog.author %}
+    <div class="action-btn">
+      <span class=""
+        ><a href="{% url 'app:update_post' blog.slug%}" class="edit-btn"
+          >Edit</a
+        ></span
+      >
+      <span class=""
+        ><a href="{% url 'app:delete_post' blog.slug %}" class="delete-btn"
+          >Delete</a
+        ></span
+      >
+    </div>
+    {% endif %}
+  </div>
 
-{% for blog in myblogs %}
-<article>
-  <h3>{{ blog.name|capfirst }}</h3>
-
-  <p>{{ blog.description|capfirst }}</p>
-
-  <br />
-</article>
-
-<hr />
-
-{% empty %}
-<p>No blogs available.</p>
-{% endfor %} {% endblock %}
+  {% empty %}
+  <p>No blogs available.</p>
+  {% endfor %} {% endblock %}
+</div>

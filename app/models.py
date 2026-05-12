@@ -111,7 +111,7 @@ class Contact(models.Model):
         verbose_name_plural = "Contact"
 
 
-class MyblogsTemp(models.Model):
+class MyBlogs(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(max_length=12000)
 

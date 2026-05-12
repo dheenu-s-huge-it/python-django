@@ -3,15 +3,14 @@
   <h2>Login</h2>
 
   <form method="POST">
-    {% csrf_token %}
-
-    {{ form.as_p }}
-
+    {% csrf_token %} {{ form.as_p }}
+    <a href="{% url 'app:forgot_password' %}">Forgot Password</a>
     <button type="submit" class="login-btn">Login</button>
   </form>
-
+  
   <div class="register-link">
-    Don't you have an account? <a href="{% url 'app:register_user' %}">Register</a>
+    Don't you have an account?
+    <a href="{% url 'app:register_user' %}">Register</a>
   </div>
 </div>
 {% endblock %}

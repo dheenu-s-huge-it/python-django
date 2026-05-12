@@ -21,8 +21,8 @@ from django.conf import settings
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("", include("django.contrib.auth.urls")), # Authentication URL
     path("", include("app.urls")),
+    path("accounts/", include("django.contrib.auth.urls")), # Authentication URL
 ]
 if settings.DEBUG:
     urlpatterns += [

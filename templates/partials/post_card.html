@@ -16,26 +16,12 @@
     <div class="card-body">
       <!-- This maps to the description column you added -->
       <p class="card-description">
-        {{ post.description|default:"No description provided." }}
+        {{ post.body|default:"No description provided." }}
       </p>
     </div>
     <a href="{% url 'app:post_details' post.slug%}" class="card-footer">
       <div class="btn-read">Read More</div>
     </a>
-    {% if request.user == post.author %}
-    <div class="action-btn">
-      <span class=""
-        ><a href="{% url 'app:update_post' post.slug%}" class="edit-btn"
-          >Edit</a
-        ></span
-      >
-      <span class=""
-        ><a href="{% url 'app:delete_post' post.slug%}" class="delete-btn"
-          >Delete</a
-        ></span
-      >
-    </div>
-    {% endif %}
   </div>
   {%endif%} {% empty %}
   <p>No posts data found.</p>

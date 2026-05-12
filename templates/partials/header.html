@@ -3,7 +3,16 @@
 <header>
   <div class="nav-container">
     <div>
-      <div class="logo">Dheen.blogs</div>
+      {% if user.is_authenticated %}
+      <a
+        href="{% url 'app:homepage' %}"
+        style="text-decoration: none; cursor: default"
+      >
+        <div class="logo">Tech.blogs</div>
+      </a>
+      {% else %}
+      <div class="logo">Tech.blogs</div>
+      {% endif %}
     </div>
     <nav>
       {% if user.is_authenticated %} {% csrf_token %}
@@ -32,24 +41,45 @@
           alt="user-logo"
           style="width: 40px; height: 40px; border-radius: 50%"
         />
-        <form method="POST" action="{% url 'app:logout_user' %}">
-          {% csrf_token %}
+        <div class="dropdown-buttons">
+          <a href="{% url 'app:change_password' %}">
+            {% csrf_token %}
 
-          <button
-            type="submit"
-            style="
-              padding: 8px 20px;
-              border-radius: 10px;
-              background-color: #d80000;
-              color: white;
-              cursor: pointer;
-              border: none;
-              outline: none;
-            "
-          >
-            Logout
-          </button>
-        </form>
+            <button
+              type="submit"
+              class="change_password_btn"
+              style="
+                padding: 8px 20px;
+                border-radius: 10px;
+                background-color: #d7d7d7;
+                color: rgb(43, 43, 43);
+                cursor: pointer;
+                border: none;
+                outline: none;
+              "
+            >
+              Change Password
+            </button>
+          </a>
+          <form method="POST" action="{% url 'app:logout_user' %}">
+            {% csrf_token %}
+
+            <button
+              type="submit"
+              style="
+                padding: 8px 20px;
+                border-radius: 10px;
+                background-color: #d80000;
+                color: white;
+                cursor: pointer;
+                border: none;
+                outline: none;
+              "
+            >
+              Logout
+            </button>
+          </form>
+        </div>
       </div>
 
       {% else %}
@@ -59,7 +89,7 @@
           style="
             padding: 8px 20px;
             border-radius: 10px;
-            background-color: #007bff;
+            background-color: #0077b5;
             color: white;
             cursor: pointer;
             border: none;

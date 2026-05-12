@@ -1,5 +1,5 @@
 from django.contrib import admin
-from app.models import Categories, Post, Tags, Comments, Contact, MyblogsTemp, Details
+from app.models import Categories, Post, Tags, Comments, Contact, MyBlogs, Details
 
 # Register your models here.
 
@@ -17,6 +17,6 @@ admin.site.register(Categories)
 admin.site.register(Comments)
 admin.site.register(Tags)
 admin.site.register(Contact)
-admin.site.register(MyblogsTemp)
+admin.site.register(MyBlogs)
 admin.site.register(Details)
 

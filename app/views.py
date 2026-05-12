@@ -1,6 +1,6 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.http import HttpResponse, HttpRequest
-from app.models import Post, MyblogsTemp, Contact, Details, Categories
+from app.models import Post, MyBlogs, Contact, Details, Categories
 
 from django.core.paginator import Paginator
 
@@ -12,16 +12,26 @@ from django.views.generic import (
     DeleteView,
 )
 
-from .forms import PostForm
+from .forms import PostForm, ForgotPasswordForm, ResetPasswordForm
 from django.urls import reverse, reverse_lazy
 
 from .forms import RegistrationForm
 
-from django.contrib.auth.forms import AuthenticationForm
-from django.contrib.auth import login, logout
+from django.contrib.auth.forms import AuthenticationForm, PasswordChangeForm
+from django.contrib.auth import login, logout, update_session_auth_hash
+
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
+
+from django.contrib.auth.models import User
+from django.contrib.auth.tokens import default_token_generator
+from django.utils.http import urlsafe_base64_encode
+from django.utils.http import urlsafe_base64_decode
+from django.utils.encoding import force_bytes
+from django.utils.encoding import force_str
+from django.core.mail import send_mail
+from django.urls import reverse
 
 
 # Function Based views (FBV)
@@ -64,7 +74,7 @@ class HomepagePostView(LoginRequiredMixin, ListView):
     model = Post
     template_name = "app/home.html"
     context_object_name = "posts"
-    paginate_by = 5
+    paginate_by = 4
 
     def get_queryset(self):
         posts = Post.objects.all().order_by("id")
@@ -92,16 +102,175 @@ class HomepagePostView(LoginRequiredMixin, ListView):
         return context
 
 
+class MyblogView(LoginRequiredMixin, ListView):
+    model = Post
+    template_name = "app/myblogs.html"
+    context_object_name = "myblogs"
+    paginate_by = 4
+
+    def get_queryset(self):
+        myblogs = (
+            Post.objects.filter(author=self.request.user)
+            .select_related("author")
+            .order_by("id")
+        )
+
+        search_query = self.request.GET.get("search", "")
+        category_id = self.request.GET.get("category", "")
+
+        if search_query:
+            myblogs = myblogs.filter(title__icontains=search_query)
+
+        if category_id:
+            myblogs = myblogs.filter(category_id=category_id)
+
+        return myblogs.select_related(
+            "category"
+        )  # it perform SQL joins and fetch the data from the database
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+
+        context["categories"] = Categories.objects.all()
+        context["count"] = (
+            Post.objects.filter(author=self.request.user)
+            .select_related("author")
+            .count()
+        )
+
+        return context
+
+
+# @login_required
+# def get_myblogs(request):
+#     # 1. Start with posts belonging ONLY to the logged-in user
+#     posts = Post.objects.filter(author=request.user).select_related('author', 'category')
+
+#     # 2. Capture the search and category from the URL (GET params)
+#     search_query = request.GET.get("search", "")
+#     category_id = request.GET.get("category", "")
+
+#     # 3. Apply filters if they exist
+#     if search_query:
+#         posts = posts.filter(title__icontains=search_query)
+
+#     if category_id:
+#         posts = posts.filter(category_id=category_id)
+
+#     # 4. Get categories for the dropdown and count for the header
+#     categories = Categories.objects.all()
+#     count = posts.count()
+
+#     return render(request, "app/myblogs.html", {
+#         "myblogs": posts,
+#         "categories": categories,
+#         "count": count
+#     })
+
+
 @login_required
-def get_myblogs(request):
-    myblogs = MyblogsTemp.objects.all()
-    return render(request, "app/myblogs.html", {"myblogs": myblogs})
+def change_password(request):
+    if request.method == "POST":
+        form = PasswordChangeForm(user=request.user, data=request.POST)
+
+        if form.is_valid():
+            user = form.save()
+
+            update_session_auth_hash(request, user)
+
+            return redirect("app:homepage")
+
+    else:
+        form = PasswordChangeForm(user=request.user)
+
+    return render(request, "registration/change_password.html", {"form": form})
+
+
+def forgot_password(request):
+
+    if request.method == "POST":
+        form = ForgotPasswordForm(request.POST)
+
+        if form.is_valid():
+            email = form.cleaned_data["email"]
+
+            try:
+                user = User.objects.get(email=email)
+
+                uid = urlsafe_base64_encode(force_bytes(user.pk))
+
+                token = default_token_generator.make_token(user)
+
+                reset_url = request.build_absolute_uri(
+                    reverse(
+                        "app:reset_password", kwargs={"uidb64": uid, "token": token}
+                    )
+                )
+
+                send_mail(
+                    subject="Reset Your Password",
+                    message=f"""
+Click below link to reset password:
+
+{reset_url}
+""",
+                    from_email=None,
+                    recipient_list=[email],
+                )
+
+                return redirect("app:login_user")
+
+            except User.DoesNotExist:
+                form.add_error("email", "No user found with this email")
+
+    else:
+        form = ForgotPasswordForm()
+
+    return render(request, "registration/forgot_password.html", {"form": form})
+
+
+def reset_password(request, uidb64, token):
+
+    try:
+        uid = force_str(urlsafe_base64_decode(uidb64))
+
+        user = User.objects.get(pk=uid)
+
+    except (TypeError, ValueError, OverflowError, User.DoesNotExist):
+        user = None
+
+    if user is not None and default_token_generator.check_token(user, token):
+        if request.method == "POST":
+            form = ResetPasswordForm(request.POST)
+
+            if form.is_valid():
+                new_password = form.cleaned_data["new_password"]
+
+                user.set_password(new_password)
+
+                user.save()
+
+                return redirect("app:login_user")
+
+        else:
+            form = ResetPasswordForm()
+
+        return render(request, "registration/reset_password.html", {"form": form})
+
+    else:
+        return HttpResponse("Invalid or expired reset link")
 
 
 @login_required
 def get_contact(request):
     contact = Contact.objects.all()
     return render(request, "app/contact.html", {"contact": contact})
+
+
+class GetContact(LoginRequiredMixin, ListView):
+    model = Contact
+    template_name = "app/contact.html"
+    context_object_name = "contacts"
 
 
 # def create_post(request):
@@ -173,22 +342,22 @@ class UpdatePostView(LoginRequiredMixin, UpdateView):
     success_url = reverse_lazy("app:homepage")
 
     # ownership of update access
-    
+
     def get_queryset(self):
         return Post.objects.filter(author=self.request.user)
 
 
 class DeletePostView(LoginRequiredMixin, DeleteView):
     model = Post
-    form_class = PostForm
-    template_name = "app/update_post.html"
+    template_name = "app/delete_post.html"
     context_object_name = "post"
     success_url = reverse_lazy("app:homepage")
     slug_field = "slug"
     slug_url_kwarg = "slug"
-    
+
     # ownership of delete access
     def get_queryset(self):
+        print(self.request.user)
         return Post.objects.filter(author=self.request.user)
 
 

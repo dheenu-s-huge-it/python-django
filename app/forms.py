@@ -1,7 +1,7 @@
 from django import forms
 from .models import Post
 
-from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth.forms import UserCreationForm, PasswordChangeForm
 from django.contrib.auth.models import User
 
 
@@ -39,7 +39,43 @@ class PostForm(forms.ModelForm):
                 )
         return body
 
+
 class RegistrationForm(UserCreationForm):
     class Meta:
         model = User
         fields = ["username", "email", "password1", "password2"]
+
+
+class ForgotPasswordForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.EmailInput(
+            attrs={"class": "form-input", "placeholder": "Enter you email"}
+        )
+    )
+
+
+class ResetPasswordForm(forms.Form):
+    new_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-input", "placeholder": "Enter new password"}
+        )
+    )
+
+    confirm_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={"class": "form-input", "placeholder": "Confirm password"}
+        )
+    )
+
+    def clean(self):
+
+        cleaned_data = super().clean()
+
+        new_password = cleaned_data.get("new_password")
+
+        confirm_password = cleaned_data.get("confirm_password")
+
+        if new_password != confirm_password:
+            raise forms.ValidationError("Passwords do not match")
+
+        return cleaned_data
