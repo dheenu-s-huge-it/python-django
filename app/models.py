@@ -33,8 +33,9 @@ class Post(models.Model):
     category = models.ForeignKey(
         Categories, on_delete=models.CASCADE, null=True, blank=True
     )
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="posts", null=True, blank=True)
-    
+    author = models.ForeignKey(
+        User, on_delete=models.CASCADE, related_name="posts", null=True, blank=True
+    )
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -46,6 +47,10 @@ class Post(models.Model):
         return self.title
 
     class Meta:
+        indexes = [
+            models.Index(fields=["created_at"]),
+            models.Index(fields=["published", "-created_at"]),
+        ]
         ordering = ["-created_at"]
         verbose_name_plural = "Posts"
 
@@ -64,14 +69,10 @@ class Details(models.Model):
     class Meta:
         ordering = ["-created_at"]
         verbose_name_plural = "Details"
-        
+
     def get_absolute_url(self):
 
-        return reverse(
-        "app:post_details",
-        kwargs={"slug": self.slug}
-    )
-
+        return reverse("app:post_details", kwargs={"slug": self.slug})
 
 
 class Tags(models.Model):

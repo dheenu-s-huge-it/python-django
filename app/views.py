@@ -33,6 +33,23 @@ from django.utils.encoding import force_str
 from django.core.mail import send_mail
 from django.urls import reverse
 
+# Django Rest Framework API creation imports
+
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+from .serializers import PostSerializer
+
+
+@api_view(["GET"])
+def post_list_api(request):
+
+    posts = Post.objects.filter(published=True)
+
+    serializer = PostSerializer(posts, many=True)
+
+    return Response(serializer.data)
+
 
 # Function Based views (FBV)
 

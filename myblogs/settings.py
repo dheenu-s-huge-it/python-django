@@ -26,7 +26,7 @@ SECRET_KEY = "django-insecure-^3kxr1k9=t0niv0i*i&0@agmfwx)=ft5lu5h-^4u2xpr)ad^c=
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ["127.0.0.1", "localhost", "*"]
+ALLOWED_HOSTS = ["127.0.0.1", "localhost", "", "*"]
 
 
 # Application definition
@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "app",
     "debug_toolbar",
+    "rest_framework",
 ]
 
 MIDDLEWARE = [
@@ -83,7 +84,7 @@ DATABASES = {
         "NAME": "myblogdb",
         "USER": "bloguser",
         "PASSWORD": "secret123",
-        "HOST": "localhost",
+        "HOST": "127.0.0.1",
         "PORT": "5432",
     }
 }

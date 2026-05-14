@@ -13,6 +13,7 @@ from .views import (
     logout_user,
     forgot_password,
     reset_password,
+    post_list_api
 )
 
 app_name = "app"
@@ -34,6 +35,9 @@ urlpatterns = [
     path("create_post/", CreatePostView.as_view(), name="create_post"),
     path("update_post/<slug:slug>/", UpdatePostView.as_view(), name="update_post"),
     path("post_delete/<slug:slug>/", DeletePostView.as_view(), name="delete_post"),
+    
+    # API
+    path("api/posts/", post_list_api, name="post_list_api"),
 ]
 
 # Function Based URL patterns
