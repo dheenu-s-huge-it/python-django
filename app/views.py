@@ -37,18 +37,117 @@ from django.urls import reverse
 
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
+
+# Django Rest Framework Token Authentication Imports
+
+from django.contrib.auth import authenticate
+from rest_framework.authtoken.models import Token
+
+from rest_framework.decorators import authentication_classes, permission_classes
+from rest_framework.authentication import TokenAuthentication
+from rest_framework.permissions import IsAuthenticated
 
 from .serializers import PostSerializer
 
 
-@api_view(["GET"])
+@api_view(["POST"])
+def app_login(request):
+    username = request.data.get("username")
+    password = request.data.get("password")
+
+    user = authenticate(username=username, password=password)
+
+    if user is None:
+        return Response({"error": "Invalid credentials"}, status=400)
+
+    token = Token.objects.get_or_create(user=user)
+
+    return Response(
+        {
+            "access_token": token.key,
+            "username": user.username,
+            "message": "Login Successful...",
+        }
+    )
+
+
+@api_view(["POST"])
+@permission_classes([IsAuthenticated])
+def app_logout(request):
+    request.user.auth_token.delete()
+    return Response({"message": "Logged out successful..."})
+
+
+@api_view(["GET", "POST"])
+# @authentication_classes([TokenAuthentication])
+# @permission_classes([IsAuthenticated])
 def post_list_api(request):
+    if request.method == "GET":
+        posts = Post.objects.filter(published=True).order_by("-created_at")
+        serializer = PostSerializer(posts, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    posts = Post.objects.filter(published=True)
+    elif request.method == "POST":
+        serializer = PostSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
 
-    serializer = PostSerializer(posts, many=True)
 
-    return Response(serializer.data)
+@api_view(["GET"])
+def post_details_list_api(request, slug):
+    post_detail = get_object_or_404(Post, slug=slug)
+    serializer = PostSerializer(post_detail)
+
+    if post_detail:
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    return Response(serializer.errors, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(["PATCH"])
+def post_patch_update(request, slug):
+    try:
+        update_post_patch = Post.objects.get(slug=slug)
+    except Post.DoesNotExist:
+        return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    serializer = PostSerializer(
+        update_post_patch, data=request.data, partial=True
+    )  # partial means patch
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["PUT"])
+def post_update(request, slug):
+    try:
+        update_post = Post.objects.get(slug=slug)
+    except Post.DoesNotExist:
+        return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    serializer = PostSerializer(update_post, data=request.data)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(["DELETE"])
+def post_delete(request, slug):
+    try:
+        delete_post = Post.objects.get(slug=slug)
+    except Post.DoesNotExist:
+        return Response({"error": "Post not found"}, status=status.HTTP_404_NOT_FOUND)
+    if delete_post:
+        delete_post.delete()
+        return Response(
+            {"message": "Post deleted successfully..."}, status=status.HTTP_200_OK
+        )
+
+    return Response({"error": "Post not found"}, status=status.HTTP_204_NO_CONTENT)
 
 
 # Function Based views (FBV)

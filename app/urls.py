@@ -13,7 +13,13 @@ from .views import (
     logout_user,
     forgot_password,
     reset_password,
-    post_list_api
+    post_list_api,
+    post_details_list_api,
+    post_update,
+    post_patch_update,
+    post_delete,
+    app_login,
+    app_logout
 )
 
 app_name = "app"
@@ -37,7 +43,13 @@ urlpatterns = [
     path("post_delete/<slug:slug>/", DeletePostView.as_view(), name="delete_post"),
     
     # API
-    path("api/posts/", post_list_api, name="post_list_api"),
+    path("api/login/", app_login, name="app_login"),
+    path("api/logout/", app_logout, name="app_logout"),
+    path("api/get/posts/", post_list_api, name="post_list_api"),
+    path("api/get/post/details/<slug:slug>", post_details_list_api, name="post_details_list_api"),
+    path("api/post/update/<slug:slug>", post_update, name="post_update"),
+    path("api/post/update/mono/<slug:slug>", post_patch_update, name="post_patch_update"),
+    path("api/post/delete/<slug:slug>", post_delete, name="post_delete"),
 ]
 
 # Function Based URL patterns
